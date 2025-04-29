@@ -1,0 +1,55 @@
+services:
+  nginx-service:
+    container_name: "nginx_service"
+    image: nginx:1.25
+    ports:
+      - '8000:80'
+    volumes:
+      - ./Nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./App/public:/var/www/html/public
+      - /etc/localtime:/etc/localtime:ro
+  php-service:
+    container_name: "php_service"
+    build:
+      dockerfile: ./PHP/Dockerfile
+    environment:
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_USER}
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      - ./App:/var/www/html
+      - /etc/localtime:/etc/localtime:ro
+  db-service:
+    container_name: "db_service"
+    image: mysql:8.0
+    ports:
+      - '4406:3306'
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_USER: ${MYSQL_USER}
+    volumes:
+      - mysqldb:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+  phpadmin:
+    container_name: "phpmyadmin"
+    image: phpmyadmin
+    ports:
+      - '8080:80'
+    depends_on:
+      - db-service
+    environment:
+      PMA_HOST: ${MYSQL_HOST}
+      PMA_USER: ${MYSQL_USER}
+      PMA_PORT: ${MYSQL_PORT}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+volumes:
+  mysqldb:
