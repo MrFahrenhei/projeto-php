@@ -4,6 +4,7 @@ namespace App\Core;
 
 abstract class Rules
 {
+    public array $loadedFields = [];
     public const string RULE_REQUIRED = 'required';
     public const string RULE_EMAIL = 'email';
     public const string RULE_UNIQUE = 'unique';
@@ -14,13 +15,14 @@ abstract class Rules
     abstract public function rules(): array;
     public function loadData(array $data): void
     {
-       foreach($data as $key => $value){
-           if(property_exists($this, $key)){
-               $this->{$key} = $value;
-           }
-       }
+        if(!empty($data)) {
+            foreach($data as $key => $value){
+                if(property_exists($this, $key)){
+                    $this->{$key} = $value;
+                }
+            }
+        }
     }
-
     public function validate(): bool
     {
         foreach($this->rules() as $attribute => $rules){
@@ -66,6 +68,11 @@ abstract class Rules
             $message = str_replace(":$key", $value, $message);
         }
         $this->errors[$attribute][] = $message;
+    }
+
+    public function addError(string $attribute, string $message): void
+    {
+       $this->errors[$attribute][] = $message;
     }
     private function errorMessage(): array
     {
