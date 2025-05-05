@@ -18,6 +18,6 @@ class AuthController extends Controllers
             }
             return $this->render($customer->errors);
         }
-        return $this->render(['Error'=>'Failure']);
+        return $this->render(['error' => 'Something went wrong.']);
     }
 }
