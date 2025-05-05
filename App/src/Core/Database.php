@@ -35,7 +35,7 @@ class Database
         $this->createMigrationTable();
         $newMigrations = [];
         $appliedMigrations = $this->getAppliedMigrations();
-        $files = scandir(App::$ROOT_DIR.'/src//Migrations');
+        $files = scandir(App::$ROOT_DIR.'/src/Migrations');
         $toApplyMigrations = array_diff($files, $appliedMigrations);
         foreach ($toApplyMigrations as $migration) {
             if($migration === '.' || $migration === '..') {
