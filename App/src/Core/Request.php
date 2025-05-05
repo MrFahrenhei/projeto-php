@@ -4,17 +4,10 @@ namespace App\Core;
 
 class Request
 {
-//    public function __construct()
-//    {
-//        echo "Request ligado".PHP_EOL;
-//    }
-
     public function getMethod(): string
     {
-//        echo "Entrou no getMethod".PHP_EOL;
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
-
     public function isGet(): bool
     {
        return $this->getMethod() === 'get';
@@ -25,7 +18,6 @@ class Request
     }
     public function getPath(): string
     {
-//        echo "Entrou no getPath".PHP_EOL;
        $path = $_SERVER['REQUEST_URI'] ?? "/";
        $position = strpos($path, "?");
        if (!$position) {
