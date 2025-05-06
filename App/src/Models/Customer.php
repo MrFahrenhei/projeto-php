@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Core\Model;
+use Exception;
 
 class Customer extends Model
 {
@@ -29,11 +30,39 @@ class Customer extends Model
     {
         return "customer_id";
     }
-
+    public function getRoles(): array
+    {
+        return ['employee'=>Employee::class];
+    }
     public function save(): bool
     {
         $this->customer_password = password_hash($this->customer_password, PASSWORD_ARGON2ID);
-        return parent::save();
+        parent::beginTransaction();
+        $result = true;
+        try{
+            $customer_save = parent::save();
+            if(!$customer_save){
+                parent::rollback();
+                $result = false;
+            }
+            $roles = $this->getRoles();
+            if(array_key_exists($this->customer_type, $roles)){
+                $class = $roles[$this->customer_type];
+                $instance = new $class();
+                $instance->{$instance->primaryKey()} = $this->customer_id;
+                $saved = $instance->save();
+                if(!$saved){
+                    parent::rollback();
+                    $result = false;
+                }
+                parent::commit();
+            }
+        }catch (Exception $e){
+            echo $e->getMessage().PHP_EOL;
+            parent::rollback();
+            $result = false;
+        }
+        return $result;
     }
     public function rules(): array
     {
