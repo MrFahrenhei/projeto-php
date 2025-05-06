@@ -55,8 +55,6 @@ class Database
             $this->log("No new Migrations were found.").PHP_EOL;
         }
     }
-
-
     private function createMigrationTable(): void
     {
         $this->pdo->exec("CREATE TABLE IF NOT EXISTS migrations (
