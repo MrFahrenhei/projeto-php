@@ -12,7 +12,11 @@ $app->router->get("/home", [Inicio::class, 'functionGet']);
 $app->router->get("/app", function(){return "this is get app";});
 $app->router->post("/app", function(){return "this is post app";});
 $app->router->post("/home", [Inicio::class, 'functionPost']);
+
+/* Crud do Customer */
 $app->router->post("/sign", [AuthController::class, 'createCustomer']);
+
+/* Crud do Home */
 $app->router->post("/insertHome", [HomeController::class, 'insertHome']);
 $app->router->get("/getAllHome", [HomeController::class, 'getAllHome']);
 $app->router->get("/getSingleHome", [HomeController::class, 'getSingleHome']);
