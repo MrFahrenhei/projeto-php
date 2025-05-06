@@ -97,10 +97,6 @@ abstract class Model extends Rules
         $this->bindValues($stmt, $seted);
         return $stmt->execute();
     }
-    public function prepare(string $sql): PDOStatement
-    {
-        return App::$app->db->pdo->prepare($sql);
-    }
     private function implodeMany(mixed $values, string $div = " AND "): string
     {
         return implode($div, array_map(fn($attr) => "$attr = :$attr", $values));
@@ -118,5 +114,21 @@ abstract class Model extends Rules
             }
             $stmt->bindValue(":$key", $value, $paramType);
         }
+    }
+    public function prepare(string $sql): PDOStatement
+    {
+        return App::$app->db->pdo->prepare($sql);
+    }
+    public function beginTransaction(): bool
+    {
+        return App::$app->db->pdo->beginTransaction();
+    }
+    public function commit(): bool
+    {
+        return App::$app->db->pdo->commit();
+    }
+    public function rollback(): bool
+    {
+       return App::$app->db->pdo->rollBack();
     }
 }
