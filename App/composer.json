@@ -1,4 +1,10 @@
 {
+  "authors": [
+    {
+      "name": "Vinícius Valle Beraldo",
+      "email":  "vvberaldo@proton.me"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "App\\": "src/"

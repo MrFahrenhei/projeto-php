@@ -25,13 +25,11 @@ class App
         self::$ROOT_DIR = $rootPath;
         $this->db = new Database();
         $this->view = new View();
-//        echo "App ligado".PHP_EOL;
     }
 
     public function run(): mixed
     {
         try{
-//            echo "Entrou no run".PHP_EOL;
             return $this->router->resolve();
         }catch (Exception $e){
             $this->response->setStatusCode(404);

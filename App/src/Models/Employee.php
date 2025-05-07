@@ -24,4 +24,9 @@ class Employee extends Model
     {
         return [];
     }
+
+    public function hydrated(): array
+    {
+        return [];
+    }
 }

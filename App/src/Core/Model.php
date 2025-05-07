@@ -2,18 +2,16 @@
 
 namespace App\Core;
 
-use App\Exceptions\HomeNotFoundException;
-use App\Models\Home;
+use App\Exceptions\ClassNotFoundException;
 use PDO;
 use PDOStatement;
-use stdClass;
 
 abstract class Model extends Rules
 {
     abstract public function tableName(): string;
     abstract public function attributes(): array;
     abstract public function primaryKey(): string;
-
+    abstract public function hydrated(): array;
     public function save(): bool
     {
        $tableName = $this->tableName();
@@ -33,23 +31,29 @@ abstract class Model extends Rules
        return $result;
     }
 
-    public function findMany(mixed $where): array
+    public function findMany(mixed $where = null): array
     {
        $tableName = $this->tableName();
-       $attributes = array_keys($where);
-       $sql = $this->implodeMany($attributes);
-       $stmt = self::prepare("SELECT * FROM $tableName WHERE $sql");
-       foreach($where as $attribute => $value) {
-          $stmt->bindValue(":$attribute", $value);
+        $query = "";
+       if(!is_null($where)){
+           $attributes = array_keys($where);
+           $sql = $this->implodeMany($attributes);
+           $query = " WHERE $sql";
+       }
+       $stmt = self::prepare("SELECT * FROM $tableName ".$query);
+       if(!is_null($where)){
+           foreach($where as $attribute => $value) {
+               $stmt->bindValue(":$attribute", $value);
+           }
        }
        $stmt->execute();
        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
-     * @throws HomeNotFoundException
+     * @throws ClassNotFoundException
      */
-    public function findOne(mixed $where, $tableName = null, $className = null): Home
+    public function findOne(mixed $where, $tableName = null, $className = null): mixed
     {
         if(is_null($tableName)) {
             $tableName = static::tableName();
@@ -65,7 +69,7 @@ abstract class Model extends Rules
         }
         $stmt->execute();
         $obj = $stmt->fetchObject($className);
-        return ($obj) ?: throw new HomeNotFoundException();
+        return ($obj) ?: throw new ClassNotFoundException();
     }
 
     public function deleteOne(mixed $seted, mixed $where, $tableName = null): bool
@@ -93,6 +97,7 @@ abstract class Model extends Rules
         $setedSQL = $this->implodeMany($setIt, ' , ');
         $whereSQL = $this->implodeMany($whereIt);
         $stmt = self::prepare("UPDATE $tableName SET $setedSQL WHERE $whereSQL");
+        echo json_encode($stmt);
         $this->bindValues($stmt, $where);
         $this->bindValues($stmt, $seted);
         return $stmt->execute();
@@ -114,6 +119,16 @@ abstract class Model extends Rules
             }
             $stmt->bindValue(":$key", $value, $paramType);
         }
+    }
+    public function hydrateFromArray(array $data): static
+    {
+        $obj = new static();
+        foreach ($data as $key => $value) {
+            if (property_exists($obj, $key)) {
+                $obj->$key = $value;
+            }
+        }
+        return $obj;
     }
     public function prepare(string $sql): PDOStatement
     {

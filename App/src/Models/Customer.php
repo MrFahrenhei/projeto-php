@@ -34,6 +34,15 @@ class Customer extends Model
     {
         return ['employee'=>Employee::class];
     }
+
+    public function getCustomerID(): false|int
+    {
+        if(!$this->customer_id){
+            $this->addError("error", "no id found");
+            return false;
+        }
+        return $this->customer_id;
+    }
     public function save(): bool
     {
         $this->customer_password = password_hash($this->customer_password, PASSWORD_ARGON2ID);
@@ -82,5 +91,17 @@ class Customer extends Model
                 [self::RULE_MIN, 'min'=>5]
             ],
         ];
+    }
+    public function hydrated(): array
+    {
+        return [
+            "customer_id"=> $this->customer_id,
+            "customer_name"=> $this->customer_name,
+            "customer_type"=>$this->customer_type,
+            "customer_email"=> $this->customer_email,
+            "customer_contact"=> $this->customer_contact,
+            "customer_address"=> $this->customer_address,
+            "dt_insert"=> $this->dt_insert,
+            ];
     }
 }

@@ -16,6 +16,14 @@ class Request
     {
         return $this->getMethod() === 'post';
     }
+    public function getQueryParams(): array
+    {
+        return $_GET ?? [];
+    }
+    public function getQueryParam(string $key, mixed $default = null): mixed
+    {
+        return $_GET[$key] ?? $default;
+    }
     public function getPath(): string
     {
        $path = $_SERVER['REQUEST_URI'] ?? "/";
@@ -25,14 +33,13 @@ class Request
        }
        return substr($path, 0, $position);
     }
-
-    public function getBody(): ?array
+    public function getBody(): array
     {
         $body = [];
         if (in_array($this->getMethod(), ['get', 'post'])) {
             $body = json_decode(file_get_contents('php://input'), true);
         }
-        return (!is_null($body)) ? $body : [];
+        return is_array($body) ? $body : [];
     }
 
 }

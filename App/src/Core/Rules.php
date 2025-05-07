@@ -15,11 +15,15 @@ abstract class Rules
     abstract public function rules(): array;
     public function loadData(array $data): void
     {
-        if(!empty($data)) {
-            foreach($data as $key => $value){
-                if(property_exists($this, $key)){
-                    $this->{$key} = $value;
-                }
+        if (empty($data)) {
+            if (property_exists($this, 'errors')) {
+                $this->addError("error", "empty body");
+            }
+            return;
+        }
+        foreach($data as $key => $value){
+            if(property_exists($this, $key)){
+                $this->{$key} = $value;
             }
         }
     }
