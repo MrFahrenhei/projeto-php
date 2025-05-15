@@ -96,8 +96,8 @@ abstract class Model extends Rules
         $setIt = array_keys($seted);
         $setedSQL = $this->implodeMany($setIt, ' , ');
         $whereSQL = $this->implodeMany($whereIt);
-        $stmt = self::prepare("UPDATE $tableName SET $setedSQL WHERE $whereSQL");
-        echo json_encode($stmt);
+        $query = "UPDATE $tableName SET $setedSQL WHERE $whereSQL";
+        $stmt = self::prepare($query);
         $this->bindValues($stmt, $where);
         $this->bindValues($stmt, $seted);
         return $stmt->execute();
