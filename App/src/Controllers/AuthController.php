@@ -4,7 +4,9 @@ namespace App\Controllers;
 
 use App\Core\Controllers;
 use App\Core\Request;
+use App\Exceptions\ClassNotFoundException;
 use App\Models\Customer;
+use DateTimeImmutable;
 
 class AuthController extends Controllers
 {
@@ -21,11 +23,12 @@ class AuthController extends Controllers
         return $this->render(['error' => 'Something went wrong.']);
     }
 
-    public function getSingleCustomer(Request $request): string
+    public function getSingleCustomer(Request $request, int $customer_id): string
     {
         $customer = new Customer();
         if($request->isGet()){
-            $customer->loadData($request->getBody());
+//            $customer->loadData($request->getBody());
+            $customer->setCustomerID($customer_id);
             if($customer->getCustomerID() && empty($customer->errors)){
                 $singleCustomer = $customer->findOne(["customer_id"=>$customer->customer_id]);
                 return $this->render($singleCustomer->hydrated());
@@ -55,11 +58,41 @@ class AuthController extends Controllers
             $customer->loadData($request->getBody());
             if($customer->getCustomerID() && empty($customer->errors)){
                 $updateData = $customer->loadedFields;
-                echo json_encode($updateData);
                 unset($updateData[$customer->primaryKey()]);
                 if($customer->updateOne($updateData, ["customer_id"=>$customer->customer_id])){
                     return $this->render(['success' => 'Customer edited successfully.']);
                 }
+            }
+            return $this->render($customer->errors);
+        }
+        return $this->render(['error' => 'Something went wrong.']);
+    }
+
+    /**
+     * @throws ClassNotFoundException
+     */
+    public function login(Request $request): string
+    {
+        $customer = new Customer();
+        if($request->isPost()){
+            $customer->loadData($request->getBody());
+            /**
+             *@var Customer $customerFromDb
+             */
+            $customerFromDb = (new Customer())->findOne(['customer_email' => $customer->customer_email]);
+            if($customer->confirmPassword($customer->customer_password, $customerFromDb->customer_password) && empty($customer->errors)){
+                $issuedAt = new DateTimeImmutable();
+                $exp = $issuedAt->modify('+6 minutes')->getTimestamp();
+                $payload = [
+                    'iss' => 'Avetools',
+                    'type' => $customerFromDb->customer_type,
+                    'sub' => $customerFromDb->customer_id,
+                    'name'=> $customerFromDb->customer_name,
+                    'iat' => $issuedAt->getTimestamp(),
+                    'exp' => $exp,
+                    'nbf' => $issuedAt->getTimestamp()];
+                $customerFromDb->setTokenPayload($payload);
+                return $this->render($customerFromDb->hydrated());
             }
             return $this->render($customer->errors);
         }
