@@ -13,6 +13,7 @@ services:
     build:
       dockerfile: ./PHP/Dockerfile
     environment:
+      SECRET_KEY: ${SECRET_KEY}
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_PORT: ${MYSQL_PORT}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
