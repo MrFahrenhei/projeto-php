@@ -2,3 +2,4 @@
 .code
 vendor/
 .env
+.lock
