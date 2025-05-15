@@ -22,12 +22,10 @@ class AuthController extends Controllers
         }
         return $this->render(['error' => 'Something went wrong.']);
     }
-
     public function getSingleCustomer(Request $request, int $customer_id): string
     {
         $customer = new Customer();
         if($request->isGet()){
-//            $customer->loadData($request->getBody());
             $customer->setCustomerID($customer_id);
             if($customer->getCustomerID() && empty($customer->errors)){
                 $singleCustomer = $customer->findOne(["customer_id"=>$customer->customer_id]);
@@ -37,7 +35,6 @@ class AuthController extends Controllers
         }
         return $this->render(['error' => 'Something went wrong.']);
     }
-
     public function getAllCustomers(Request $request): string
     {
         $customer = new Customer();
@@ -50,7 +47,6 @@ class AuthController extends Controllers
         }
         return $this->render(['error' => 'Something went wrong.']);
     }
-
     public function updateCustomer(Request $request): string
     {
         $customer = new Customer();
@@ -67,7 +63,6 @@ class AuthController extends Controllers
         }
         return $this->render(['error' => 'Something went wrong.']);
     }
-
     /**
      * @throws ClassNotFoundException
      */
