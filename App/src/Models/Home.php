@@ -40,15 +40,6 @@ class Home extends Model
             "home_cep" => [self::RULE_REQUIRED],
         ];
     }
-    public function loadData(array $data): void
-    {
-        parent::loadData($data);
-        foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->loadedFields[$key] = $value;
-            }
-        }
-    }
     public function hydrated(): array
     {
         return ["home_id"=> $this->home_id, "home_address" => $this->home_address, "home_cep" => $this->home_cep, "status" => $this->status, "dt_insert" => $this->dt_insert];
