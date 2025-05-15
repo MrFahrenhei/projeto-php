@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Core\JwtAuth;
 use App\Core\Model;
 use Exception;
 
@@ -14,13 +15,13 @@ class Customer extends Model
     public string $customer_password = '';
     public string $customer_contact = '';
     public string $customer_address = '';
+    public string $token;
     public string $dt_insert;
 
     public function tableName(): string
     {
         return 'customer';
     }
-
     public function attributes(): array
     {
         return ['customer_name','customer_type', 'customer_email', 'customer_password', 'customer_contact', 'customer_address'];
@@ -34,7 +35,10 @@ class Customer extends Model
     {
         return ['employee'=>Employee::class];
     }
-
+    public function setCustomerID(int $customer_id): void
+    {
+       $this->customer_id = $customer_id;
+    }
     public function getCustomerID(): false|int
     {
         if(!$this->customer_id){
@@ -92,9 +96,13 @@ class Customer extends Model
             ],
         ];
     }
+    public function setTokenPayload(array $payload): void
+    {
+        $this->token = (new JwtAuth())::generate($payload);
+    }
     public function hydrated(): array
     {
-        return [
+        $return = [
             "customer_id"=> $this->customer_id,
             "customer_name"=> $this->customer_name,
             "customer_type"=>$this->customer_type,
@@ -102,6 +110,10 @@ class Customer extends Model
             "customer_contact"=> $this->customer_contact,
             "customer_address"=> $this->customer_address,
             "dt_insert"=> $this->dt_insert,
-            ];
+        ];
+        if(!empty($this->token)){
+            $return["token"] = $this->token;
+        }
+        return $return;
     }
 }
