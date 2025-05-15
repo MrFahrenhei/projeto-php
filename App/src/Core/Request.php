@@ -24,6 +24,20 @@ class Request
     {
         return $_GET[$key] ?? $default;
     }
+    public function getTokenUser(): ?array
+    {
+        $headers = getallheaders();
+        if (!isset($headers['Authorization'])) {
+            return null;
+        }
+        $matches = [];
+        if (preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
+            $token = $matches[1];
+            return JwtAuth::decode($token);
+        }
+
+        return null;
+    }
     public function getPath(): string
     {
        $path = $_SERVER['REQUEST_URI'] ?? "/";
