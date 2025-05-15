@@ -24,6 +24,7 @@ abstract class Rules
         foreach($data as $key => $value){
             if(property_exists($this, $key)){
                 $this->{$key} = $value;
+                $this->loadedFields[$key] = $value;
             }
         }
     }
@@ -64,7 +65,6 @@ abstract class Rules
         }
        return empty($this->errors);
     }
-
     private function addErrorForRule(string $attribute, string $rule, array $params = []): void
     {
         $message = $this->errorMessage()[$rule] ?? '';
@@ -73,7 +73,6 @@ abstract class Rules
         }
         $this->errors[$attribute][] = $message;
     }
-
     public function addError(string $attribute, string $message): void
     {
        $this->errors[$attribute][] = $message;
@@ -89,4 +88,13 @@ abstract class Rules
             self::RULE_ROLES => 'This field must be of one of the type.',
         ];
     }
+    public function confirmPassword(string $password, string $passwordFromDB): bool
+    {
+        if (password_verify($password, $passwordFromDB)) {
+            return true;
+        }
+        $this->addError("error", "Wrong password");
+        return false;
+    }
+
 }
