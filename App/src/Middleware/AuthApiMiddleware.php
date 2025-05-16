@@ -6,7 +6,7 @@ use App\Core\JwtAuth;
 use App\Core\Request;
 use App\Exceptions\InvalidToken;
 
-class AuthMiddleware implements MiddlewareInterface
+class AuthApiMiddleware implements MiddlewareInterface
 {
     /**
      * @throws InvalidToken
