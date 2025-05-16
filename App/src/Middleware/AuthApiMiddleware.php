@@ -13,8 +13,10 @@ class AuthApiMiddleware implements MiddlewareInterface
      */
     public function handle(Request $request): void
     {
-        $headers = getallheaders();
-        $authHeader = $headers['Authorization'] ?? '';
+        $authHeader = $request->getHeader('Authorization');
+        if(empty($authHeader)) {
+            throw new InvalidToken();
+        }
         if (!str_starts_with($authHeader, 'Bearer ')) {
             throw new InvalidToken();
         }
@@ -23,9 +25,12 @@ class AuthApiMiddleware implements MiddlewareInterface
         if (!$decoded) {
             throw new InvalidToken();
         }
+        $request->setAttribute('user', $decoded);
         $timeLeft = $decoded['exp'] - time();
-        if ($timeLeft < 120) {
+//        echo $timeLeft;
+        if ($timeLeft < 250) {
             $newToken = (new JwtAuth())::generateToken($decoded);
+            header('Access-Control-Expose-Headers: X-Refresh-Token'); // <- necessário
             header('X-Refresh-Token: Bearer ' . $newToken);
         }
     }
