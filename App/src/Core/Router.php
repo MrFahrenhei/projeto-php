@@ -4,6 +4,8 @@ namespace App\Core;
 
 use App\Enums\RouteWildcard;
 use App\Exceptions\NotFoundException;
+use App\Middleware\MiddlewareInterface;
+use Exception;
 
 class Router
 {
@@ -39,8 +41,10 @@ class Router
             'middleware' => $middleware,
         ];
     }
+
     /**
      * @throws NotFoundException
+     * @throws Exception
      */
     public function resolve(): mixed
     {
@@ -55,9 +59,12 @@ class Router
                 foreach ($middlewares as $middleware) {
                     $middlewareClass = "\\App\\Middleware\\" . ucfirst($middleware) . "Middleware";
                     if (!class_exists($middlewareClass)) {
-                        throw new \Exception("Middleware '$middlewareClass' not found.");
+                        throw new Exception("Middleware '$middlewareClass' not found.");
                     }
                     $instance = new $middlewareClass();
+                    if (!$instance instanceof MiddlewareInterface) {
+                        throw new \Exception("Middleware {$middlewareClass} must implement MiddlewareInterface");
+                    }
                     $instance->handle($this->request);
                 }
                 if (is_array($callback)) {
