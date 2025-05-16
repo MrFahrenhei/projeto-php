@@ -17,7 +17,7 @@ $app->router->post("/home", [Inicio::class, 'functionPost']);
 /* Crud do Customer */
 $app->router->post("/sign", [AuthController::class, 'createCustomer']);
 $app->router->get("/getSingleCustomer/(:numeric)", [AuthController::class, 'getSingleCustomer']);
-$app->router->get("/getAllCustomers", [AuthController::class, 'getAllCustomers']);
+$app->router->get("/getAllCustomers", [AuthController::class, 'getAllCustomers'], ['authApi']);
 $app->router->post("/updateCustomer", [AuthController::class, 'updateCustomer'], ['authApi']);
 $app->router->post("/login", [AuthController::class, 'login']);
 
