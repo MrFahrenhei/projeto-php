@@ -25,6 +25,13 @@ class App
         self::$ROOT_DIR = $rootPath;
         $this->db = new Database();
         $this->view = new View();
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+        header('Access-Control-Allow-Headers: Authorization, Content-Type');
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            http_response_code(200);
+            exit();
+        }
     }
 
     public function run(): mixed
