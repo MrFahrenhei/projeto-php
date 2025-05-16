@@ -2,9 +2,11 @@
 
 namespace App\Enums;
 
-use App\Middleware\AuthMiddleware;
+use App\Middleware\AuthApiMiddleware;
+use App\Middleware\AuthModuleMiddleware;
 
 enum RouteMiddlewares: string
 {
-    case customer = AuthMiddleware::class;
+    case customer = AuthApiMiddleware::class;
+    case module = AuthModuleMiddleware::class;
 }
