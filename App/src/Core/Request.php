@@ -4,6 +4,7 @@ namespace App\Core;
 
 class Request
 {
+    private array $attributes = [];
     public function getMethod(): string
     {
         return strtolower($_SERVER['REQUEST_METHOD']);
@@ -15,6 +16,24 @@ class Request
     public function isPost(): bool
     {
         return $this->getMethod() === 'post';
+    }
+    public function getHeader(string $name): ?string
+    {
+        $headers = getallheaders();
+        foreach ($headers as $key => $value) {
+            if (strtolower($key) === strtolower($name)) {
+                return $value;
+            }
+        }
+        return null;
+    }
+    public function setAttribute(string $key, mixed $value): void
+    {
+        $this->attributes[$key] = $value;
+    }
+    public function getAttribute(string $key, mixed $default = null): mixed
+    {
+        return $this->attributes[$key] ?? $default;
     }
     public function getQueryParams(): array
     {
@@ -28,10 +47,7 @@ class Request
     {
        $path = $_SERVER['REQUEST_URI'] ?? "/";
        $position = strpos($path, "?");
-       if (!$position) {
-          return $path;
-       }
-       return substr($path, 0, $position);
+        return $position === false ? $path : substr($path, 0, $position);
     }
     public function getBody(): array
     {
