@@ -96,6 +96,10 @@ class Customer extends Model
             ],
         ];
     }
+    public function setToken(string $token): void
+    {
+        $this->token = $token;
+    }
     public function setTokenPayload(array $payload): void
     {
         $this->token = (new JwtAuth())::generate($payload);
