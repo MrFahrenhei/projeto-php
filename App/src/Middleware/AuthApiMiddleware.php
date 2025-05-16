@@ -2,7 +2,6 @@
 
 namespace App\Middleware;
 
-use App\Core\App;
 use App\Core\JwtAuth;
 use App\Core\Request;
 use App\Exceptions\InvalidToken;

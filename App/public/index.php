@@ -18,12 +18,12 @@ $app->router->post("/home", [Inicio::class, 'functionPost']);
 $app->router->post("/sign", [AuthController::class, 'createCustomer']);
 $app->router->get("/getSingleCustomer/(:numeric)", [AuthController::class, 'getSingleCustomer']);
 $app->router->get("/getAllCustomers", [AuthController::class, 'getAllCustomers']);
-$app->router->post("/updateCustomer", [AuthController::class, 'updateCustomer'], ['auth']);
+$app->router->post("/updateCustomer", [AuthController::class, 'updateCustomer'], ['authApi']);
 $app->router->post("/login", [AuthController::class, 'login']);
 
 /* Crud do Home */
 $app->router->post("/insertHome", [HomeController::class, 'insertHome']);
-$app->router->get("/getAllHome", [HomeController::class, 'getAllHome']);
+$app->router->get("/getAllHome", [HomeController::class, 'getAllHome'], ['authModule']);
 $app->router->get("/getSingleHome", [HomeController::class, 'getSingleHome']);
 $app->router->post("/updateHome", [HomeController::class, 'updateHome']);
 $app->router->post("/deleteHome", [HomeController::class, 'deleteHome']);
