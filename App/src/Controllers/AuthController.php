@@ -22,6 +22,10 @@ class AuthController extends Controllers
         }
         return $this->render(['error' => 'Something went wrong.']);
     }
+
+    /**
+     * @throws ClassNotFoundException
+     */
     public function getSingleCustomer(Request $request, int $customer_id): string
     {
         $customer = new Customer();
@@ -63,6 +67,7 @@ class AuthController extends Controllers
         }
         return $this->render(['error' => 'Something went wrong.']);
     }
+
     /**
      * @throws ClassNotFoundException
      */
@@ -83,9 +88,8 @@ class AuthController extends Controllers
                     'type' => $customerFromDb->customer_type,
                     'sub' => $customerFromDb->customer_id,
                     'name'=> $customerFromDb->customer_name,
-                    'iat' => $issuedAt->getTimestamp(),
                     'exp' => $exp,
-                    'nbf' => $issuedAt->getTimestamp()];
+                ];
                 $customerFromDb->setTokenPayload($payload);
                 return $this->render($customerFromDb->hydrated());
             }
