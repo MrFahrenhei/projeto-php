@@ -13,11 +13,19 @@ class Request
     {
        return $this->getMethod() === 'get';
     }
+    public function isPut(): bool
+    {
+        return $this->getMethod() === 'put';
+    }
+    public function isDelete(): bool
+    {
+        return $this->getMethod() === 'delete';
+    }
     public function isPost(): bool
     {
         return $this->getMethod() === 'post';
     }
-    public function getHeader(string $name): ?string
+    public function getHeader(string $name, string $default = null): ?string
     {
         $headers = getallheaders();
         foreach ($headers as $key => $value) {
@@ -25,7 +33,7 @@ class Request
                 return $value;
             }
         }
-        return null;
+        return $default;
     }
     public function setAttribute(string $key, mixed $value): void
     {
@@ -52,7 +60,7 @@ class Request
     public function getBody(): array
     {
         $body = [];
-        if (in_array($this->getMethod(), ['get', 'post'])) {
+        if (in_array($this->getMethod(), ['get', 'post', 'put', 'delete'])) {
             $body = json_decode(file_get_contents('php://input'), true);
         }
         return is_array($body) ? $body : [];

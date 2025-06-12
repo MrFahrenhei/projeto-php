@@ -34,7 +34,6 @@ class Router
     }
     public function post(string $path, mixed $callback, ?array $middleware = null): void
     {
-
         $newPath = $this->replaceWildcardWithPattern($path);
         $this->routes['post'][$newPath] = [
             'callback' => $callback,
@@ -42,6 +41,23 @@ class Router
         ];
     }
 
+    public function put(string $path, mixed $callback, ?array $middleware = null): void
+    {
+        $newPath = $this->replaceWildcardWithPattern($path);
+        $this->routes['put'][$newPath] = [
+            'callback' => $callback,
+            'middleware' => $middleware,
+        ];
+    }
+
+    public function delete(string $path, mixed $callback, ?array $middleware = null): void
+    {
+        $newPath = $this->replaceWildcardWithPattern($path);
+        $this->routes['delete'][$newPath] = [
+            'callback' => $callback,
+            'middleware' => $middleware,
+        ];
+    }
     /**
      * @throws NotFoundException
      * @throws Exception

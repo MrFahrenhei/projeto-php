@@ -51,7 +51,7 @@ class HomeController extends Controllers
     public function deleteHome(Request $request): string
     {
         $home = new Home();
-        if($request->isPost()) {
+        if($request->isDelete()) {
             $home->loadData($request->getBody());
             if($home->getHomeID() AND empty($home->errors)){
                 if($home->deleteOne(["status"=>false],["home_id"=>$home->home_id])) {
@@ -65,7 +65,7 @@ class HomeController extends Controllers
     public function updateHome(Request $request): string
     {
         $home = new Home();
-        if($request->isPost()) {
+        if($request->isPut()) {
             $home->loadData($request->getBody());
             if($home->getHomeID() AND empty($home->errors)){
                 $updateData = $home->loadedFields;

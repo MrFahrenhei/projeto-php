@@ -54,7 +54,7 @@ class AuthController extends Controllers
     public function updateCustomer(Request $request): string
     {
         $customer = new Customer();
-        if($request->isPost()){
+        if($request->isPut()){
             $customer->loadData($request->getBody());
             if($customer->getCustomerID() && empty($customer->errors)){
                 $updateData = $customer->loadedFields;

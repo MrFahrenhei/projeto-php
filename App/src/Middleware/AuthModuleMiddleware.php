@@ -13,7 +13,7 @@ class AuthModuleMiddleware implements MiddlewareInterface
      */
     public function handle(Request $request): void
     {
-        $providedAuth = $_SERVER['HTTP_AUTH_API_KEY'] ?? null;
+        $providedAuth = $request->getHeader('Auth-Api-Key');
         $secretKey = getenv('SECRET_KEY');
         if($providedAuth !== $secretKey) {
             throw new InvalidToken();
